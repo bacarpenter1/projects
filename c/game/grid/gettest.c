@@ -7,7 +7,7 @@ char getin();
 int main()
 {
 	initscr();
-	noecho();
+//	noecho();
 //	fflush(stdout);
 
 	char test = '1';
@@ -16,10 +16,17 @@ int main()
 
 	while( 1 )
 	{
+		noecho();
 		test  = getch();
 
-		printw("-%c-\n",test);
+		printw("-%c-\n", test);
 		refresh();
+//		echo();
+
+//		test = getch();
+
+//		printw("--%c--\n", test);	
+//		refresh();
 
 		if (test == 'q')
 			return 0;
