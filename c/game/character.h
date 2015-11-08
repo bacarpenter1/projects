@@ -16,5 +16,7 @@ struct Character
 struct  Character* init_character();
 
 void clean_character(struct Character* mon);
+
+void print_location(struct Character* mon);
 	
 #endif //CHARACTER_H		

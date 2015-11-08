@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <ncurses.h>
 #include "character.h"
 
 // initialize several character traits
@@ -28,3 +29,8 @@ void clean_character(struct Character* mon)
 
 	free(mon);
 }
+
+void print_location(struct Character* mon)
+{
+	printw("%s is at (%d,%d)\n", mon->name, *mon->pos.x, *mon->pos.y);
+}	

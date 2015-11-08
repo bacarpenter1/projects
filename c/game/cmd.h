@@ -3,7 +3,8 @@
 
 #ifndef CMD_H
 #define CMD_H
+#include "character.h"
 
-void do_cmd_walk(struct Coordinate* ptr_position);
+void move_mon(struct Character* ptr_mon, enum Direction dir);
 
 #endif //CMD_H
