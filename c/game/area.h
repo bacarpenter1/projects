@@ -25,6 +25,8 @@ enum Direction
 struct Tile
 {
 	char floor[2];// = { '.', '#' };	
+
+	struct Character* mon;
 };
 
 // map made up of multiple tiles
@@ -38,6 +40,5 @@ struct Area* init_grid();
 void print_grid(struct Area* ptr_grid);
 
 void clean_grid(struct Area* ptr_grid);
-
 
 #endif //end AREA_H

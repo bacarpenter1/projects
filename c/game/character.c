@@ -32,5 +32,5 @@ void clean_character(struct Character* mon)
 
 void print_location(struct Character* mon)
 {
-	printw("%s is at (%d,%d)\n", mon->name, *mon->pos.x, *mon->pos.y);
+	printw("%s is at (%d,%d)\n", mon->name, *mon->pos.x, *mon->pos.y*-1);
 }	

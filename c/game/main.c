@@ -14,6 +14,7 @@ int main()
 	// declare player character as type Character
 	struct Character* player;
 	struct Area* grid;
+	enum Direction dir;
 
 	player = init_character();
 	grid = init_grid();
@@ -24,12 +25,25 @@ int main()
 	
 //	printw("%s at (%d,%d)\n", player->name, *player->pos.x, *player->pos.y);
 	print_location(player);
-	move_mon(player, north);
-	print_location(player);
 
-	print_grid(grid);
+	// temp demo of movement
+	for (int i = 0; i < 3;i++)
+	{
+		if (getch() == '2')
+		{
+			dir = south;
+		}
+		else
+		{
+			dir = east;
+		}
+		move_mon(player, grid, dir);
+		print_location(player);
 
-	refresh();
+		print_grid(grid);
+
+		refresh();
+	}
 
 	endwin();	
 
