@@ -4,11 +4,13 @@
 #ifndef CHARACTER_H
 #define CHARACTER_H
 #include "item.h"
-#include "area.h"
+//#include "area.h"
+#include "coordinate.h"
 
 struct Character
 {
 	char* name;
+	char sym;
 	struct Item inventory[10];
 	struct Coordinate pos;
 };// Character;

@@ -4,16 +4,20 @@
 #ifndef AREA_H
 #define AREA_H
 
-
+#include "character.h"
 #define GRIDMAX 20
 
 // coordinate contains the (x,y) location for a cartesian plane
+/*	MOVED TO coordinate.h for modularity
 struct Coordinate 
 {
 	int* x, * y;
 };
+*/
 
 // enum for direction --> may move to a different file
+// MOVED TO cmd.h
+/*
 enum Direction
 {
 	north,
@@ -21,6 +25,7 @@ enum Direction
 	east,
 	west
 };
+*/
 // floore tile that contains up to one enemy/player, and multiple items
 struct Tile
 {

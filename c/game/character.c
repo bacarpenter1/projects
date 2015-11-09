@@ -10,6 +10,7 @@ struct Character* init_character()
 	struct Character* mon = malloc(sizeof(struct Character));
 
 	mon->name = "Ben";
+	mon->sym = '@';
 	// allocate mem for coordinates
 	mon->pos.x = malloc(sizeof(int));
 	mon->pos.y = malloc(sizeof(int));
@@ -32,5 +33,5 @@ void clean_character(struct Character* mon)
 
 void print_location(struct Character* mon)
 {
-	printw("%s is at (%d,%d)\n", mon->name, *mon->pos.x, *mon->pos.y*-1);
+	printw("%s is at (%d,%d)\n", mon->name, *mon->pos.x, *mon->pos.y);
 }	

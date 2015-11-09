@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <ncurses.h>
 #include "area.h"
+#include "coordinate.h"
+#include "character.h"
 
 //grid init
 struct Area* init_grid()
@@ -28,14 +30,15 @@ struct Area* init_grid()
 //print grid
 void print_grid(struct Area* ptr_grid)
 {
-	for (int j = 0; j < GRIDMAX; j++ )
+	// print for typical cartesian grid
+	for (int j = GRIDMAX-1 ; j >= 0; j-- )
 	{
 		for (int i = 0; i < GRIDMAX; i++)
 		{
 			// print each tile!
 			if (ptr_grid->tile[i][j].mon != NULL)
 			{
-				printw("@");
+				printw("%c", ptr_grid->tile[i][j].mon->sym);
 			}
 			else
 			{ 
