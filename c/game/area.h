@@ -42,7 +42,11 @@ struct Area
 
 struct Area* init_grid();
 
+void add_to_grid(struct Character* ptr_mon, struct Area* ptr_grid);
+
 void print_grid(struct Area* ptr_grid);
+
+void update_grid(struct Area* ptr_grid);
 
 void clean_grid(struct Area* ptr_grid);
 

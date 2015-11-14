@@ -8,7 +8,7 @@
 #include "character.h"
 
 //grid init
-struct Area* init_grid()
+struct Area* init_grid(struct Character* ptr_player)
 {	
 	// malloc for the grid ptr
 	struct Area* ptr_grid = malloc(sizeof(struct Area));
@@ -24,8 +24,17 @@ struct Area* init_grid()
 		}
 	}
 
+	ptr_grid->tile[0][0].mon = ptr_player;
+
 	return ptr_grid;
 }
+
+void add_to_grid(struct Character* ptr_mon, struct Area* ptr_grid)
+{
+	*ptr_mon->pos.x = 5;
+	*ptr_mon->pos.y = 5;
+	ptr_grid->tile[5][5].mon = ptr_mon;
+}	
 
 //print grid
 void print_grid(struct Area* ptr_grid)
@@ -61,4 +70,37 @@ void clean_grid(struct Area* ptr_grid)
 	free(ptr_grid);
 }
 
-	
+
+// update_grid after each cmd, using monster position
+void update_grid(struct Area* ptr_grid)
+{
+	int x, y;
+
+	for (int i = 0; i < GRIDMAX; i++)
+	{
+		for (int j = 0; j < GRIDMAX; j++)
+		{
+			if (ptr_grid->tile[i][j].mon != NULL)
+			{
+		//		printw("$");
+				x = *ptr_grid->tile[i][j].mon->pos.x;
+				y = *ptr_grid->tile[i][j].mon->pos.y;  
+				
+				if ( ((x != i) || (y != j)) && ptr_grid->tile[x][y].mon == NULL )
+				{
+					ptr_grid->tile[x][y].mon = ptr_grid->tile[i][j].mon;
+					ptr_grid->tile[i][j].mon = NULL;
+				}
+				else
+				{
+					*ptr_grid->tile[i][j].mon->pos.x = i;
+					*ptr_grid->tile[i][j].mon->pos.y = j;
+					
+				}
+			}
+		//	printw("^");
+		}
+		//printw("\n");
+	}
+}
+			

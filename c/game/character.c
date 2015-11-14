@@ -11,6 +11,8 @@ struct Character* init_character()
 
 	mon->name = "Ben";
 	mon->sym = '@';
+	mon->health = 10;
+	mon->maxHealth = 10;
 	// allocate mem for coordinates
 	mon->pos.x = malloc(sizeof(int));
 	mon->pos.y = malloc(sizeof(int));
@@ -31,7 +33,9 @@ void clean_character(struct Character* mon)
 	free(mon);
 }
 
+// actually prints info
 void print_location(struct Character* mon)
 {
-	printw("%s is at (%d,%d)\n", mon->name, *mon->pos.x, *mon->pos.y);
+	printw("%s is at (%d,%d)\nHP: %d/%d\n", 
+		mon->name, *mon->pos.x, *mon->pos.y, mon->health, mon->maxHealth);
 }	

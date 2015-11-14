@@ -8,18 +8,24 @@
 #include "cmd.h"
 
 
-struct Game_cmd* get_cmd()
+struct Command* get_cmd()
 {
-	struct Game_cmd* temp = malloc(sizeof(struct Game_cmd));
+	struct Command* temp = malloc(sizeof(struct Command));
 	noecho();
 	cbreak();
 	//echo();
 	temp->input = getch();
 	echo();
-	temp->cmd = which_cmd(temp->input);
+	temp->code = which_cmd(temp->input);
 
 	return temp;
 }
+const struct Game_cmd cmd_list[] = 
+{
+	//cmd_code, dir, Character*, handler_fn
+	{ CMD_WAIT, NULL},
+	{ CMD_MOVE, move_mon}
+};
 
 enum cmd_code which_cmd(char command)
 {
@@ -33,62 +39,121 @@ enum cmd_code which_cmd(char command)
 	}
 }
 
-// inits game command ptr and returns to calling function
-struct Game_cmd* init_game_cmd(struct Character* ptr_mon)
+enum Direction proc_direction(struct Command* ptr_cmd)
 {
-	struct Game_cmd* temp_cmd;
+	ptr_cmd->dir = ptr_cmd->input -48;
 
-	temp_cmd = malloc(sizeof(struct Game_cmd));
+	return ptr_cmd->dir;
+}
+
+// inits game command ptr and returns to calling function
+struct Command * init_game_cmd(struct Character* ptr_mon)
+{
+	struct Command* temp_cmd;
+
+	temp_cmd = malloc(sizeof(struct Command));
 
 	temp_cmd->mon = ptr_mon;
 
-	temp_cmd->cmd = CMD_WAIT;
+	temp_cmd->code = CMD_WAIT;
 
 	temp_cmd->input = '\0';
 	return temp_cmd;
 }
-/*
-void process_cmd(struct Game_cmd* ptr_cmd)
+
+// assign command code
+void process_cmd(struct Command* ptr_cmd)
 {
-	if (ptr_cmd->cmd == CMD_MOVE)
+	//struct Command* ptr_exec_cmd = malloc(sizeof(struct Command));
+
+	//ptr_exec_cmd->cmd_code = which_cmd(ptr_cmd->input);
+
+	ptr_cmd->input = getch();
+
+	proc_direction(ptr_cmd);
+
+	if ( ptr_cmd->input > 48 && ptr_cmd->input < 58 )
 	{
-		if (ptr_cmd->input == '8')
-			move_mon(ptr_cmd->mon, 	
-*/
-void clean_game_cmd(struct Game_cmd* ptr_game_cmd)
+		ptr_cmd->code = cmd_list[1].cmd;
+	}
+}
+// execute command
+void exec_cmd(struct Command* ptr_cmd, struct Area* ptr_grid)
+{
+
+	for (int i = 0; i < 2 /*&& ptr_cmd->code != cmd_list[i].cmd */; i++)
+	{	
+		// iff game codes match, execute
+		if (ptr_cmd->code == cmd_list[i].cmd)
+		{
+			cmd_list[i].fn(ptr_cmd, ptr_grid);
+			return;
+		}
+	}
+}
+void clean_game_cmd(struct Command* ptr_game_cmd)
 {
 	free(ptr_game_cmd);
 }
 
 // move monster or player
-void move_mon(struct Character* ptr_mon, struct Area* ptr_grid, enum Direction dir)
+
+//void move_mon(struct Character* ptr_mon, struct Area* ptr_grid, enum Direction dir)
+void move_mon(struct Command* ptr_cmd, struct Area* ptr_grid)
 {
-	int x = *ptr_mon->pos.x;
-	int y = *ptr_mon->pos.y;
+	int x = *ptr_cmd->mon->pos.x;
+	int y = *ptr_cmd->mon->pos.y;
 
 	ptr_grid->tile[x][y].mon = NULL;
 
-	switch (dir)
+	switch (ptr_cmd->dir)
 	{	case north:
-			*ptr_mon->pos.y = *ptr_mon->pos.y + 1;
-			y += 1;
+			if ((y+1) < GRIDMAX)
+			{
+				y += 1;
+			}
 			break;
 		case south:
-			*ptr_mon->pos.y = *ptr_mon->pos.y - 1;
-			y -= 1;
+			if ((y-1) >= 0)
+			{
+				y -= 1;
+			}
 			break;
 		case east:
-			*ptr_mon->pos.x = *ptr_mon->pos.x + 1;
-			x += 1;
+			if ((x+1) < GRIDMAX)
+			{
+				x += 1;
+			}
 			break;
 		case west:
-			*ptr_mon->pos.x = *ptr_mon->pos.x - 1;
-			x -= 1;
+			if ((x-1) >= 0)
+			{
+				x -= 1;
+			}
 			break;
 		default:
 			break;
 	}
 
-	ptr_grid->tile[x][y].mon = ptr_mon;
+	if (ptr_grid->tile[x][y].mon == NULL)
+	{	ptr_grid->tile[x][y].mon = ptr_cmd->mon;
+		*ptr_cmd->mon->pos.x = x;
+		*ptr_cmd->mon->pos.y = y;	
+	}
+	else
+	{
+		attack(ptr_cmd->mon, ptr_grid->tile[x][y].mon);
+
+		x = *ptr_cmd->mon->pos.x;
+		y = *ptr_cmd->mon->pos.y;
+
+		ptr_grid->tile[x][y].mon = ptr_cmd->mon;
+	}
+
+	
 }
 
+void attack(struct Character* ptr_attacker, struct Character* ptr_defender)
+{
+	ptr_defender->health--;
+}

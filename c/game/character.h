@@ -11,6 +11,7 @@ struct Character
 {
 	char* name;
 	char sym;
+	int health, maxHealth;
 	struct Item inventory[10];
 	struct Coordinate pos;
 };// Character;
