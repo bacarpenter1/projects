@@ -1,0 +1,4 @@
+use 2/4/6/8 to move via numpad
+o opens doors
+simply walk into a monster to attack it
+
