@@ -70,7 +70,7 @@ void process_cmd(struct Command* ptr_cmd)
 
 	ptr_cmd->input = getch();
 
-	proc_direction(ptr_cmd);
+//	proc_direction(ptr_cmd);
 
 	if ( ptr_cmd->input > 48 && ptr_cmd->input < 58 )
 	{
@@ -101,6 +101,8 @@ void clean_game_cmd(struct Command* ptr_game_cmd)
 //void move_mon(struct Character* ptr_mon, struct Area* ptr_grid, enum Direction dir)
 void move_mon(struct Command* ptr_cmd, struct Area* ptr_grid)
 {
+	proc_direction(ptr_cmd);
+
 	int x = *ptr_cmd->mon->pos.x;
 	int y = *ptr_cmd->mon->pos.y;
 
@@ -108,7 +110,7 @@ void move_mon(struct Command* ptr_cmd, struct Area* ptr_grid)
 
 	switch (ptr_cmd->dir)
 	{	case north:
-			if ((y+1) < GRIDMAX)
+			if ((y+1) < GRIDMAX_Y)
 			{
 				y += 1;
 			}
@@ -120,7 +122,7 @@ void move_mon(struct Command* ptr_cmd, struct Area* ptr_grid)
 			}
 			break;
 		case east:
-			if ((x+1) < GRIDMAX)
+			if ((x+1) < GRIDMAX_X)
 			{
 				x += 1;
 			}
@@ -135,15 +137,28 @@ void move_mon(struct Command* ptr_cmd, struct Area* ptr_grid)
 			break;
 	}
 
-	if (ptr_grid->tile[x][y].mon == NULL)
+	if (ptr_grid->tile[x][y].mon == NULL &&	ptr_grid->tile[x][y].type != wall
+		&& ptr_grid->tile[x][y].type != door_closed)
 	{	ptr_grid->tile[x][y].mon = ptr_cmd->mon;
 		*ptr_cmd->mon->pos.x = x;
 		*ptr_cmd->mon->pos.y = y;	
 	}
+	else if (ptr_grid->tile[x][y].type == door_closed)
+	{
+		open(ptr_cmd, ptr_grid);
+	}
 	else
 	{
-		attack(ptr_cmd->mon, ptr_grid->tile[x][y].mon);
-
+		if (ptr_grid->tile[x][y].mon != NULL)
+		{
+			attack(ptr_cmd->mon, ptr_grid->tile[x][y].mon);
+/*			if (ptr_grid->tile[x][y].mon->health <= 0)
+			{
+				printw("you have killed it\n");
+				ptr_grid->tile[x][y].mon = NULL;
+			}
+*/
+		}
 		x = *ptr_cmd->mon->pos.x;
 		y = *ptr_cmd->mon->pos.y;
 
@@ -155,5 +170,54 @@ void move_mon(struct Command* ptr_cmd, struct Area* ptr_grid)
 
 void attack(struct Character* ptr_attacker, struct Character* ptr_defender)
 {
+	ptr_attacker->target = ptr_defender;
 	ptr_defender->health--;
+
+	if (ptr_defender->health <= 0)
+	{
+		ptr_attacker->target = NULL;
+	}
 }
+
+void open(struct Command* ptr_cmd, struct Area* ptr_grid)
+{
+	int x, y;
+
+	x = *ptr_cmd->mon->pos.x;
+	y = *ptr_cmd->mon->pos.y;
+
+	switch (ptr_cmd->dir)
+	{	case north:
+			if ((y+1) < GRIDMAX_Y)
+			{
+				y += 1;
+			}
+			break;
+		case south:
+			if ((y-1) >= 0)
+			{
+				y -= 1;
+			}
+			break;
+		case east:
+			if ((x+1) < GRIDMAX_X)
+			{
+				x += 1;
+			}
+			break;
+		case west:
+			if ((x-1) >= 0)
+			{
+				x -= 1;
+			}
+			break;
+		default:
+			break;
+	}
+
+	if (ptr_grid->tile[x][y].type == door_closed)
+	{
+		ptr_grid->tile[x][y].type = door_open;
+	}
+
+}	

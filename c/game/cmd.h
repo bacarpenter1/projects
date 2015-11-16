@@ -63,4 +63,5 @@ void attack(struct Character* ptr_attacker, struct Character* ptr_defender);
 //void move_mon(struct Character* ptr_mon, struct Area* ptr_grid, enum Direction dir);
 void move_mon(struct Command* ptr_cmd, struct Area* ptr_grid);
 
+void open(struct Command* ptr_cmd, struct Area* ptr_grid);
 #endif //CMD_H

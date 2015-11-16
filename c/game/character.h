@@ -7,6 +7,11 @@
 //#include "area.h"
 #include "coordinate.h"
 
+enum CharacterType
+{
+	player,
+	monster
+};
 struct Character
 {
 	char* name;
@@ -14,6 +19,8 @@ struct Character
 	int health, maxHealth;
 	struct Item inventory[10];
 	struct Coordinate pos;
+	enum CharacterType type;
+	struct Character* target;
 };// Character;
 
 struct  Character* init_character();

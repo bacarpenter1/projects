@@ -14,30 +14,33 @@ int main()
 	clear();
 
 	// declare player character as type Character
-	struct Character* player, * monster;
+	struct Character* player, * ptr_monster;
 	struct Area* grid;
 	enum Direction dir;
 	struct Command* game_cmd; 
 	char turn = 'p';
 
 	player = init_character();
-	monster = init_character();
-	monster->sym = 'X';
-	monster->name = "MONSTER";
+	ptr_monster = init_character();
+
+//	player->target = ptr_monster;
+
+	ptr_monster->sym = 'X';
+	ptr_monster->name = "MONSTER";
+	ptr_monster->type = monster;
 
 	printw("%c\n", player->sym);
 
 	grid = init_grid(player);
-	add_to_grid(monster, grid);
+	add_to_grid(ptr_monster, grid);
 	game_cmd = init_game_cmd(player);
 
 	
-//	printw("%s at (%d,%d)\n", player->name, *player->pos.x, *player->pos.y);
 	print_location(player);
-//	print_grid(grid);
 
+	update_grid(grid);
 	update_screen(player, grid);
-
+	refresh();
 //	while ( (game_cmd->input = get_cmd()) != CMD_QUIT)
 
 //	while ( game_cmd->code != CMD_QUIT )
@@ -56,7 +59,7 @@ int main()
 		}
 		else
 		{
-			game_cmd->mon = monster;
+			game_cmd->mon = ptr_monster;
 			//game_cmd->input =ai_move();
 			turn = 'p';
 		}
@@ -93,18 +96,23 @@ int main()
 		//clear();
 		
 		//print_location(player);		
-	//	update_grid(grid);				
+		update_grid(grid);				
 		
 
 		update_screen(player, grid);
-		print_location(monster);
-		printw("Turn: %c\n",turn);
+		//print_location(ptr_monster);
+		//printw("Turn: %c\n",turn);
+		//move(GRIDMAX_Y+1 - *player->pos.y, *player->pos.x);
+
+		//NOTE!! refresh() called here only so cursor and ptr_monster can be printed 
+		//correctly!  THIS MUST BE FIXED SO THAT update_screen() takes care of it.
+		refresh();
 	}
 
 	endwin();	
 
 	clean_character(player);
-	clean_character(monster);
+	clean_character(ptr_monster);
 	clean_grid(grid);
 	clean_game_cmd(game_cmd);
 

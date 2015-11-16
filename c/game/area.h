@@ -5,7 +5,9 @@
 #define AREA_H
 
 #include "character.h"
-#define GRIDMAX 20
+
+#define GRIDMAX_X 80
+#define GRIDMAX_Y 20
 
 // coordinate contains the (x,y) location for a cartesian plane
 /*	MOVED TO coordinate.h for modularity
@@ -26,11 +28,22 @@ enum Direction
 	west
 };
 */
+
+enum tileType
+{
+	floor = 0,
+	wall = 1,
+	up_stair = 2,
+	down_stair = 3,
+	door_closed = 4,
+	door_open = 5
+};
+
 // floore tile that contains up to one enemy/player, and multiple items
 struct Tile
 {
-	char floor[2];// = { '.', '#' };	
-
+	char floor[2]; // = { '.', '#' };	
+	enum tileType type;	
 	struct Character* mon;
 };
 

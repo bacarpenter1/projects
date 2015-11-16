@@ -7,6 +7,8 @@
 #include "coordinate.h"
 #include "character.h"
 
+const char tile_character[] = { '.', '#', '<', '>', '+', ','};
+
 //grid init
 struct Area* init_grid(struct Character* ptr_player)
 {	
@@ -14,13 +16,31 @@ struct Area* init_grid(struct Character* ptr_player)
 	struct Area* ptr_grid = malloc(sizeof(struct Area));
 
 	// malloc for each tile in grid, and init for each tile
-	ptr_grid->tile = malloc(sizeof(struct Tile*) * GRIDMAX);
-	for (int i = 0; i < GRIDMAX; i++)
+	ptr_grid->tile = malloc(sizeof(struct Tile*) * GRIDMAX_X);
+	for (int i = 0; i < GRIDMAX_X; i++)
 	{
-		ptr_grid->tile[i] = malloc(sizeof(struct Tile) * GRIDMAX);
-		for (int j = 0; j < GRIDMAX; j++)
+		ptr_grid->tile[i] = malloc(sizeof(struct Tile) * GRIDMAX_Y);
+		for (int j = 0; j < GRIDMAX_Y; j++)
 		{
 			ptr_grid->tile[i][j].mon = NULL;
+
+			if (i == 0 || j == 0 || j == GRIDMAX_Y - 1 || i == GRIDMAX_X -1 || i == 20)
+			{
+				ptr_grid->tile[i][j].type = wall;
+				if (i == 20 && j == 10)
+				{
+					ptr_grid->tile[i][j].type = door_closed;
+				}
+			}
+			else if (i == 20 && j == 10)
+			{
+				ptr_grid->tile[i][j].type = door_closed;
+			}
+			else
+			{
+
+				ptr_grid->tile[i][j].type = floor;
+			}
 		}
 	}
 
@@ -39,29 +59,36 @@ void add_to_grid(struct Character* ptr_mon, struct Area* ptr_grid)
 //print grid
 void print_grid(struct Area* ptr_grid)
 {
+	int player_x = 0, player_y = 0;
 	// print for typical cartesian grid
-	for (int j = GRIDMAX-1 ; j >= 0; j-- )
+	for (int j = GRIDMAX_Y-1 ; j >= 0; j-- )
 	{
-		for (int i = 0; i < GRIDMAX; i++)
+		for (int i = 0; i < GRIDMAX_X; i++)
 		{
 			// print each tile!
 			if (ptr_grid->tile[i][j].mon != NULL)
 			{
 				printw("%c", ptr_grid->tile[i][j].mon->sym);
+				if (ptr_grid->tile[i][j].mon->type == player)
+				{
+					player_x = i;
+					player_y = j;
+				}
 			}
 			else
 			{ 
-				printw(".");//, *ptr_grid->tile[i][j].floor[0];
+				printw("%c", tile_character[ptr_grid->tile[i][j].type]);
 			}
 		}
 		printw("\n");
 	}
+
 }
 
 // free all grid memory
 void clean_grid(struct Area* ptr_grid)
 {
-	for (int i = 0; i < GRIDMAX; i++)
+	for (int i = 0; i < GRIDMAX_X; i++)
 	{
 		free(ptr_grid->tile[i]);
 	}
@@ -76,9 +103,9 @@ void update_grid(struct Area* ptr_grid)
 {
 	int x, y;
 
-	for (int i = 0; i < GRIDMAX; i++)
+	for (int j = 0; j < GRIDMAX_Y; j++)
 	{
-		for (int j = 0; j < GRIDMAX; j++)
+		for (int i = 0; i < GRIDMAX_X; i++)
 		{
 			if (ptr_grid->tile[i][j].mon != NULL)
 			{
@@ -89,6 +116,12 @@ void update_grid(struct Area* ptr_grid)
 				if ( ((x != i) || (y != j)) && ptr_grid->tile[x][y].mon == NULL )
 				{
 					ptr_grid->tile[x][y].mon = ptr_grid->tile[i][j].mon;
+					ptr_grid->tile[i][j].mon = NULL;
+				}
+				else if (ptr_grid->tile[i][j].mon->health <= 0)
+				{
+					*ptr_grid->tile[i][j].mon->pos.x = 0;
+					*ptr_grid->tile[i][j].mon->pos.y = 0;
 					ptr_grid->tile[i][j].mon = NULL;
 				}
 				else

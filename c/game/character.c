@@ -13,13 +13,15 @@ struct Character* init_character()
 	mon->sym = '@';
 	mon->health = 10;
 	mon->maxHealth = 10;
+	mon->type = player;
+	mon->target = NULL;
 	// allocate mem for coordinates
 	mon->pos.x = malloc(sizeof(int));
 	mon->pos.y = malloc(sizeof(int));
 
-	// initialize coordinates to 0,0
-	*(mon->pos.x) = 0;
-	*(mon->pos.y) = 0;
+	// initialize coordinates to 1,1 (not on a wall)
+	*(mon->pos.x) = 1;
+	*(mon->pos.y) = 1;
 
 	return mon;
 }
