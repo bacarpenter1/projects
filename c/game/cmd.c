@@ -20,11 +20,14 @@ struct Command* get_cmd()
 
 	return temp;
 }
+
+#define NUM_CMDS 3
 const struct Game_cmd cmd_list[] = 
 {
 	//cmd_code, dir, Character*, handler_fn
 	{ CMD_WAIT, NULL},
-	{ CMD_MOVE, move_mon}
+	{ CMD_MOVE, move_mon},
+	{ CMD_OPEN, open}
 };
 
 enum cmd_code which_cmd(char command)
@@ -41,7 +44,19 @@ enum cmd_code which_cmd(char command)
 
 enum Direction proc_direction(struct Command* ptr_cmd)
 {
-	ptr_cmd->dir = ptr_cmd->input -48;
+	noecho();
+	char direction;
+	if (ptr_cmd->input > '0' &&  ptr_cmd->input < '9')
+	{ 
+		ptr_cmd->dir = ptr_cmd->input -48;
+	}
+	else if (ptr_cmd->input == 'o')
+	{
+		printw("Enter direction: ");
+		direction = getch();
+		ptr_cmd->dir = direction - 48;
+	}
+	
 
 	return ptr_cmd->dir;
 }
@@ -76,12 +91,16 @@ void process_cmd(struct Command* ptr_cmd)
 	{
 		ptr_cmd->code = cmd_list[1].cmd;
 	}
+	else if (ptr_cmd->input == 'o')
+	{
+		ptr_cmd->code = cmd_list[2].cmd;
+	}
 }
 // execute command
 void exec_cmd(struct Command* ptr_cmd, struct Area* ptr_grid)
 {
 
-	for (int i = 0; i < 2 /*&& ptr_cmd->code != cmd_list[i].cmd */; i++)
+	for (int i = 0; i < NUM_CMDS /*&& ptr_cmd->code != cmd_list[i].cmd */; i++)
 	{	
 		// iff game codes match, execute
 		if (ptr_cmd->code == cmd_list[i].cmd)
@@ -182,6 +201,8 @@ void attack(struct Character* ptr_attacker, struct Character* ptr_defender)
 void open(struct Command* ptr_cmd, struct Area* ptr_grid)
 {
 	int x, y;
+
+	proc_direction(ptr_cmd);
 
 	x = *ptr_cmd->mon->pos.x;
 	y = *ptr_cmd->mon->pos.y;

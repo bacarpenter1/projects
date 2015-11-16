@@ -11,6 +11,7 @@ enum cmd_code
 {
 	CMD_WAIT,
 	CMD_MOVE,
+	CMD_OPEN,
 	CMD_QUIT
 };	
 
