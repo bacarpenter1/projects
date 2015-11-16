@@ -65,19 +65,24 @@ char movement( int* x, int* y )
 {
 	char direction = get_movement();
 
-	if (direction == '6')
+	if (direction == '\033')
+	{
+		getch(); // skip [
+		direction = getch();
+	}
+	if (direction == '6' || direction == 'C')
 	{
 		*x = *x+1;
 	}
-	else if (direction == '4')
+	else if (direction == '4' || direction == 'D')
 	{
 		*x = *x-1;
 	}
-	else if (direction == '2')
+	else if (direction == '2' || direction == 'A')
 	{
 		*y = *y+1;
 	}
-	else if (direction == '8')
+	else if (direction == '8' || direction == 'B')
 	{
 		*y = *y-1;
 	}

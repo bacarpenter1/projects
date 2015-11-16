@@ -15,6 +15,11 @@ struct Command* get_cmd()
 	cbreak();
 	//echo();
 	temp->input = getch();
+	if (temp->input == '\033')
+	{
+//		getch(); //skip [
+		proc_direction(temp);
+	}
 	echo();
 	temp->code = which_cmd(temp->input);
 
@@ -49,6 +54,29 @@ enum Direction proc_direction(struct Command* ptr_cmd)
 	if (ptr_cmd->input > '0' &&  ptr_cmd->input < '9')
 	{ 
 		ptr_cmd->dir = ptr_cmd->input -48;
+	}
+	else if (ptr_cmd->input == '\033')
+	{
+		getch();
+		direction = getch();
+		
+		switch (direction)
+		{
+			case 'A':
+				direction = north;
+				break;
+			case 'B': 
+				direction = south;
+				break;
+			case 'C':
+				direction = east;
+				break;
+			case 'D':
+				direction = west;
+				break;
+		}
+
+		ptr_cmd->dir = direction;
 	}
 	else if (ptr_cmd->input == 'o')
 	{
@@ -87,7 +115,8 @@ void process_cmd(struct Command* ptr_cmd)
 
 //	proc_direction(ptr_cmd);
 
-	if ( ptr_cmd->input > 48 && ptr_cmd->input < 58 )
+	if ( (ptr_cmd->input > 48 && ptr_cmd->input < 58 ) || 
+		( ptr_cmd->input =='\033' ) )
 	{
 		ptr_cmd->code = cmd_list[1].cmd;
 	}
