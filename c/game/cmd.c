@@ -25,7 +25,7 @@ struct Command* get_cmd()
 const struct Game_cmd cmd_list[] = 
 {
 	//cmd_code, dir, Character*, handler_fn
-	{ CMD_WAIT, NULL},
+	{ CMD_WAIT, wait_cmd},
 	{ CMD_MOVE, move_mon},
 	{ CMD_OPEN, open}
 };
@@ -94,6 +94,10 @@ void process_cmd(struct Command* ptr_cmd)
 	else if (ptr_cmd->input == 'o')
 	{
 		ptr_cmd->code = cmd_list[2].cmd;
+	}
+	else
+	{
+		ptr_cmd->code = CMD_WAIT;
 	}
 }
 // execute command
@@ -241,4 +245,10 @@ void open(struct Command* ptr_cmd, struct Area* ptr_grid)
 		ptr_grid->tile[x][y].type = door_open;
 	}
 
-}	
+}
+
+void wait_cmd(struct Command* ptr_cmd, struct Area* ptr_grid)
+{
+
+	return;
+}
