@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ncurses.h>
+#include <time.h>
 #include "area.h"
 #include "coordinate.h"
 #include "character.h"
@@ -15,6 +16,13 @@ struct Area* init_grid(struct Character* ptr_player)
 	// malloc for the grid ptr
 	struct Area* ptr_grid = malloc(sizeof(struct Area));
 
+	int randx = 0;
+	int randy = 0;
+	srand(time(NULL));
+
+	randx = rand() % 40 + 20;
+	randy = rand() % 15 + 5;
+
 	// malloc for each tile in grid, and init for each tile
 	ptr_grid->tile = malloc(sizeof(struct Tile*) * GRIDMAX_X);
 	for (int i = 0; i < GRIDMAX_X; i++)
@@ -24,17 +32,14 @@ struct Area* init_grid(struct Character* ptr_player)
 		{
 			ptr_grid->tile[i][j].mon = NULL;
 
-			if (i == 0 || j == 0 || j == GRIDMAX_Y - 1 || i == GRIDMAX_X -1 || i == 20)
+			if (i == 0 || j == 0 || j == GRIDMAX_Y - 1 || i == GRIDMAX_X -1 
+				|| i == randx)
 			{
 				ptr_grid->tile[i][j].type = wall;
-				if (i == 20 && j == 10)
+				if (i == randx && j == randy)
 				{
 					ptr_grid->tile[i][j].type = door_closed;
 				}
-			}
-			else if (i == 20 && j == 10)
-			{
-				ptr_grid->tile[i][j].type = door_closed;
 			}
 			else
 			{

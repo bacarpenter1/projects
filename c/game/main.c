@@ -97,11 +97,11 @@ int main()
 		
 		//print_location(player);		
 		update_grid(grid);				
-		
+		clear();
 
+		printw("Turn: %c\n",turn);
 		update_screen(player, grid);
 		//print_location(ptr_monster);
-		//printw("Turn: %c\n",turn);
 		//move(GRIDMAX_Y+1 - *player->pos.y, *player->pos.x);
 
 		//NOTE!! refresh() called here only so cursor and ptr_monster can be printed 

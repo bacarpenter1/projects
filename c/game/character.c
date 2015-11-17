@@ -15,6 +15,7 @@ struct Character* init_character()
 	mon->maxHealth = 10;
 	mon->type = player;
 	mon->target = NULL;
+
 	// allocate mem for coordinates
 	mon->pos.x = malloc(sizeof(int));
 	mon->pos.y = malloc(sizeof(int));

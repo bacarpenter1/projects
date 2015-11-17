@@ -26,13 +26,14 @@ struct Command* get_cmd()
 	return temp;
 }
 
-#define NUM_CMDS 3
+#define NUM_CMDS 4
 const struct Game_cmd cmd_list[] = 
 {
 	//cmd_code, dir, Character*, handler_fn
 	{ CMD_WAIT, wait_cmd},
 	{ CMD_MOVE, move_mon},
-	{ CMD_OPEN, open}
+	{ CMD_OPEN, open},
+	{ CMD_CLOSE, close}
 };
 
 enum cmd_code which_cmd(char command)
@@ -57,7 +58,9 @@ enum Direction proc_direction(struct Command* ptr_cmd)
 	}
 	else if (ptr_cmd->input == '\033')
 	{
-		getch();
+	//	direction = arrow_keys(direction);
+
+/*		getch();
 		direction = getch();
 		
 		switch (direction)
@@ -75,14 +78,22 @@ enum Direction proc_direction(struct Command* ptr_cmd)
 				direction = west;
 				break;
 		}
-
-		ptr_cmd->dir = direction;
+*/
+		ptr_cmd->dir = arrow_keys(direction);
 	}
-	else if (ptr_cmd->input == 'o')
+	else if (ptr_cmd->input == 'o' || ptr_cmd->input == 'c')
 	{
 		printw("Enter direction: ");
 		direction = getch();
-		ptr_cmd->dir = direction - 48;
+	
+		if (direction > '0' && direction <= '9')
+		{
+			ptr_cmd->dir = direction - 48;
+		}
+		else
+		{
+			ptr_cmd->dir = arrow_keys(direction);
+		}
 	}
 	
 
@@ -100,6 +111,8 @@ struct Command * init_game_cmd(struct Character* ptr_mon)
 
 	temp_cmd->code = CMD_WAIT;
 
+	temp_cmd->dir = none;
+
 	temp_cmd->input = '\0';
 	return temp_cmd;
 }
@@ -112,7 +125,7 @@ void process_cmd(struct Command* ptr_cmd)
 	//ptr_exec_cmd->cmd_code = which_cmd(ptr_cmd->input);
 
 	ptr_cmd->input = getch();
-
+	ptr_cmd->dir = none;
 //	proc_direction(ptr_cmd);
 
 	if ( (ptr_cmd->input > 48 && ptr_cmd->input < 58 ) || 
@@ -123,6 +136,10 @@ void process_cmd(struct Command* ptr_cmd)
 	else if (ptr_cmd->input == 'o')
 	{
 		ptr_cmd->code = cmd_list[2].cmd;
+	}
+	else if (ptr_cmd->input == 'c')
+	{
+		ptr_cmd->code = cmd_list[3].cmd;
 	}
 	else
 	{
@@ -276,8 +293,78 @@ void open(struct Command* ptr_cmd, struct Area* ptr_grid)
 
 }
 
+void close(struct Command* ptr_cmd, struct Area* ptr_grid)
+{
+	int x, y;
+
+	proc_direction(ptr_cmd);
+
+	x = *ptr_cmd->mon->pos.x;
+	y = *ptr_cmd->mon->pos.y;
+
+	switch (ptr_cmd->dir)
+	{	case north:
+			if ((y+1) < GRIDMAX_Y)
+			{
+				y += 1;
+			}
+			break;
+		case south:
+			if ((y-1) >= 0)
+			{
+				y -= 1;
+			}
+			break;
+		case east:
+			if ((x+1) < GRIDMAX_X)
+			{
+				x += 1;
+			}
+			break;
+		case west:
+			if ((x-1) >= 0)
+			{
+				x -= 1;
+			}
+			break;
+		default:
+			break;
+	}
+
+	if (ptr_grid->tile[x][y].type == door_open)
+	{
+		ptr_grid->tile[x][y].type = door_closed;
+	}
+
+}
+
+// used to wait ie no cmd key is pressed
 void wait_cmd(struct Command* ptr_cmd, struct Area* ptr_grid)
 {
 
 	return;
 }
+
+// not sure what this was supposed to be for...
+enum Direction arrow_keys(char direction)
+{
+	getch();
+	direction = getch();
+	
+	switch (direction)
+	{
+		case 'A':
+			return north;
+		case 'B': 
+			return south;
+		case 'C':
+			return east;
+		case 'D':
+			return west;
+		default:
+			return none;
+	}
+
+}
+
+

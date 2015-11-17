@@ -9,7 +9,7 @@
 void update_screen(struct Character* ptr_player, struct Area* ptr_grid)
 {
 	int offset = 0;
-	clear();
+//	clear(); ->>>> CLEAR USED IN MAIN.C
 
 	printw("\n");
 	print_location(ptr_player);

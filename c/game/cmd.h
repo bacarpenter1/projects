@@ -12,12 +12,14 @@ enum cmd_code
 	CMD_WAIT,
 	CMD_MOVE,
 	CMD_OPEN,
+	CMD_CLOSE,
 	CMD_QUIT
 };	
 
 enum Direction
 {
 	none = 0,
+	self = 5,
 	north = 8,
 	south = 2,
 	east = 6,
@@ -66,5 +68,9 @@ void move_mon(struct Command* ptr_cmd, struct Area* ptr_grid);
 
 void open(struct Command* ptr_cmd, struct Area* ptr_grid);
 
+void close(struct Command* ptr_cmd, struct Area* ptr_grid);
+
 void wait_cmd(struct Command* ptr_cmd, struct Area* ptr_grid);
+
+enum Direction arrow_keys(char direction);
 #endif //CMD_H
