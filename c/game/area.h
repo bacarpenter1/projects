@@ -63,4 +63,5 @@ void update_grid(struct Area* ptr_grid);
 
 void clean_grid(struct Area* ptr_grid);
 
+void gen_level(struct Area* ptr_grid);
 #endif //end AREA_H

@@ -32,11 +32,13 @@ int main()
 	printw("%c\n", player->sym);
 
 	grid = init_grid(player);
+	gen_level(grid);
 	add_to_grid(ptr_monster, grid);
+	update_grid(grid);
 	game_cmd = init_game_cmd(player);
 
 	
-	print_location(player);
+//	print_location(player);
 
 	update_grid(grid);
 	update_screen(player, grid);
@@ -54,7 +56,6 @@ int main()
 		if (turn == 'p')
 		{
 			game_cmd->mon = player;
-			//game_cmd->input = getch();
 			turn = 'm';
 		}
 		else
@@ -70,29 +71,7 @@ int main()
 	//	game_cmd = get_cmd();
 		process_cmd(game_cmd);
 		exec_cmd(game_cmd, grid);
-/*		
-		if (game_cmd->input == '2')
-		{
-			dir = south;
-		}
-		else if (game_cmd->input == '8')
-		{
-			dir = north;
-		}
-		else if (game_cmd->input == '4')
-		{
-			dir = west;
-		}
-		else if (game_cmd->input =='6')
-		{
-			dir = east;
-		}
-
-//		if ( temp == '8' )
-//			dir = north;	
-*/		
-		//move_mon(player, grid, game_cmd->dir);		
-		//move_mon(game_cmd);
+		
 		//clear();
 		
 		//print_location(player);		
@@ -101,8 +80,6 @@ int main()
 
 		printw("Turn: %c\n",turn);
 		update_screen(player, grid);
-		//print_location(ptr_monster);
-		//move(GRIDMAX_Y+1 - *player->pos.y, *player->pos.x);
 
 		//NOTE!! refresh() called here only so cursor and ptr_monster can be printed 
 		//correctly!  THIS MUST BE FIXED SO THAT update_screen() takes care of it.

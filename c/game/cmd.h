@@ -23,7 +23,11 @@ enum Direction
 	north = 8,
 	south = 2,
 	east = 6,
-	west = 4
+	west = 4,
+	seast = 3,
+	swest = 1,
+	nwest = 7,
+	neast = 9
 };
 
 struct Command
@@ -71,6 +75,8 @@ void open(struct Command* ptr_cmd, struct Area* ptr_grid);
 void close(struct Command* ptr_cmd, struct Area* ptr_grid);
 
 void wait_cmd(struct Command* ptr_cmd, struct Area* ptr_grid);
+
+struct Coordinate* new_location(int x, int y, enum Direction dir);
 
 enum Direction arrow_keys(char direction);
 #endif //CMD_H

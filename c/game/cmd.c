@@ -52,7 +52,7 @@ enum Direction proc_direction(struct Command* ptr_cmd)
 {
 	noecho();
 	char direction;
-	if (ptr_cmd->input > '0' &&  ptr_cmd->input < '9')
+	if (ptr_cmd->input > '0' &&  ptr_cmd->input <= '9')
 	{ 
 		ptr_cmd->dir = ptr_cmd->input -48;
 	}
@@ -170,14 +170,21 @@ void clean_game_cmd(struct Command* ptr_game_cmd)
 //void move_mon(struct Character* ptr_mon, struct Area* ptr_grid, enum Direction dir)
 void move_mon(struct Command* ptr_cmd, struct Area* ptr_grid)
 {
+	struct Coordinate* temp;
+
 	proc_direction(ptr_cmd);
 
 	int x = *ptr_cmd->mon->pos.x;
 	int y = *ptr_cmd->mon->pos.y;
 
 	ptr_grid->tile[x][y].mon = NULL;
+// ADDED FOR NEW LOCATION TEST
+	temp = new_location(x, y, ptr_cmd->dir);	
 
-	switch (ptr_cmd->dir)
+	x = *temp->x;
+	y = *temp->y;
+// END ADDITON
+/*	switch (ptr_cmd->dir)
 	{	case north:
 			if ((y+1) < GRIDMAX_Y)
 			{
@@ -202,10 +209,17 @@ void move_mon(struct Command* ptr_cmd, struct Area* ptr_grid)
 				x -= 1;
 			}
 			break;
+		case nwest:
+			if ((x - 1) >= 0 && (y+1) < GRIDMAX_Y)
+			{
+				x -= 1;
+				y += 1;
+			}
+			break;
 		default:
 			break;
 	}
-
+*/
 	if (ptr_grid->tile[x][y].mon == NULL &&	ptr_grid->tile[x][y].type != wall
 		&& ptr_grid->tile[x][y].type != door_closed)
 	{	ptr_grid->tile[x][y].mon = ptr_cmd->mon;
@@ -221,12 +235,6 @@ void move_mon(struct Command* ptr_cmd, struct Area* ptr_grid)
 		if (ptr_grid->tile[x][y].mon != NULL)
 		{
 			attack(ptr_cmd->mon, ptr_grid->tile[x][y].mon);
-/*			if (ptr_grid->tile[x][y].mon->health <= 0)
-			{
-				printw("you have killed it\n");
-				ptr_grid->tile[x][y].mon = NULL;
-			}
-*/
 		}
 		x = *ptr_cmd->mon->pos.x;
 		y = *ptr_cmd->mon->pos.y;
@@ -234,7 +242,7 @@ void move_mon(struct Command* ptr_cmd, struct Area* ptr_grid)
 		ptr_grid->tile[x][y].mon = ptr_cmd->mon;
 	}
 
-	
+	clean_coordinate(temp);
 }
 
 void attack(struct Character* ptr_attacker, struct Character* ptr_defender)
@@ -367,4 +375,91 @@ enum Direction arrow_keys(char direction)
 
 }
 
+struct Coordinate* new_location( int x, int y, enum Direction dir)
+{
+	struct Coordinate* temp;
 
+	temp = malloc(sizeof(struct Coordinate));
+
+	temp->x = malloc(sizeof(int));
+	temp->y = malloc(sizeof(int));
+
+	switch (dir)
+	{	case north:
+			if ((y+1) < GRIDMAX_Y)
+			{
+				y += 1;
+			}
+			break;
+		case south:
+			if ((y-1) >= 0)
+			{
+				y -= 1;
+			}
+			break;
+		case east:
+			if ((x+1) < GRIDMAX_X)
+			{
+				x += 1;
+			}
+			break;
+		case west:
+			if ((x-1) >= 0)
+			{
+				x -= 1;
+			}
+			break;
+		case neast:
+			if ((x+1) < GRIDMAX_X)
+			{
+				x += 1;
+			}
+			
+			if ((y+1) < GRIDMAX_Y)
+			{
+				y += 1;
+			}
+			break;
+		case nwest:
+			if ((x-1) >= 0)
+			{
+				x -= 1;
+			}
+		
+			if ((y+1) < GRIDMAX_Y)
+			{
+				y += 1;
+			}
+			break;	
+		case swest:
+			if ((x-1) >= 0)
+			{
+				x -= 1;
+			}
+		
+			if ((y-1) >= 0)
+			{
+				y -= 1;
+			}
+			break;	
+		case seast:
+			if ((x+1) < GRIDMAX_X)
+			{
+				x += 1;
+			}
+		
+			if ((y-1) >= 0)
+			{
+				y -= 1;
+			}
+			break;	
+
+		default:
+			break;
+	}
+
+	*temp->x = x;
+	*temp->y = y;
+
+	return temp;
+}	

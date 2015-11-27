@@ -49,6 +49,7 @@ struct Area* init_grid(struct Character* ptr_player)
 		}
 	}
 
+
 	ptr_grid->tile[0][0].mon = ptr_player;
 
 	return ptr_grid;
@@ -141,4 +142,61 @@ void update_grid(struct Area* ptr_grid)
 		//printw("\n");
 	}
 }
-			
+		
+void gen_level(struct Area* ptr_grid)
+{
+	int randx = 0;
+	int randy = 0;
+	int randsubx = 0;
+	int randsuby = 0;
+
+	srand(time(NULL));
+
+	randx = rand() % 40 + 20;
+	randy = rand() % 15 + 5;
+
+	randsubx = rand() % (randx - 1) + 1;
+	randsuby = rand() % (randy - 1) + 5;
+
+	clear();
+
+	printw("randx = %d\nrandy = %d\n", randx, randy);
+
+	refresh();
+//	getch();
+
+	for (int i = 0; i < GRIDMAX_X; i++)
+	{
+		ptr_grid->tile[i] = malloc(sizeof(struct Tile) * GRIDMAX_Y);
+		for (int j = 0; j < GRIDMAX_Y; j++)
+		{
+			ptr_grid->tile[i][j].mon = NULL;
+
+			if (i == 0 || j == 0 || j == GRIDMAX_Y - 1 || i == GRIDMAX_X -1 
+				|| i == randx)
+			{
+				ptr_grid->tile[i][j].type = wall;
+	
+				if (i == randx && j == randy)
+				{
+					ptr_grid->tile[i][j].type = door_closed;
+				}
+			}
+			else if (j == randsuby && i < randx)
+			{
+				ptr_grid->tile[i][j].type = wall;
+
+				if (i == randsubx)
+				{
+					ptr_grid->tile[i][j].type = door_closed;
+				}
+			}
+			else
+			{
+
+				ptr_grid->tile[i][j].type = floor;
+			}
+		}
+	}
+
+}	
