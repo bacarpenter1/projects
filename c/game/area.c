@@ -31,35 +31,30 @@ struct Area* init_grid(struct Character* ptr_player)
 		for (int j = 0; j < GRIDMAX_Y; j++)
 		{
 			ptr_grid->tile[i][j].mon = NULL;
-
-			if (i == 0 || j == 0 || j == GRIDMAX_Y - 1 || i == GRIDMAX_X -1 
-				|| i == randx)
-			{
-				ptr_grid->tile[i][j].type = wall;
-				if (i == randx && j == randy)
-				{
-					ptr_grid->tile[i][j].type = door_closed;
-				}
-			}
-			else
-			{
-
-				ptr_grid->tile[i][j].type = floor;
-			}
+			ptr_grid->tile[i][j].type = wall;
 		}
 	}
 
 
-	ptr_grid->tile[0][0].mon = ptr_player;
+//	ptr_grid->tile[0][0].mon = ptr_player;
 
 	return ptr_grid;
 }
 
 void add_to_grid(struct Character* ptr_mon, struct Area* ptr_grid)
 {
-	*ptr_mon->pos.x = 5;
-	*ptr_mon->pos.y = 5;
-	ptr_grid->tile[5][5].mon = ptr_mon;
+	int randx, randy;
+
+	do
+	{	
+		randx = rand() % (GRIDMAX_X - 1) + 1;
+		randy = rand() % (GRIDMAX_Y - 1) + 1;
+	} while (ptr_grid->tile[randx][randy].type != floor && 
+			ptr_grid->tile[randx][randy].mon != NULL);
+
+	*ptr_mon->pos.x = randx;
+	*ptr_mon->pos.y = randy;
+	ptr_grid->tile[randx][randy].mon = ptr_mon;
 }	
 
 //print grid
@@ -130,12 +125,12 @@ void update_grid(struct Area* ptr_grid)
 					*ptr_grid->tile[i][j].mon->pos.y = 0;
 					ptr_grid->tile[i][j].mon = NULL;
 				}
-				else
+			/*	else
 				{
 					*ptr_grid->tile[i][j].mon->pos.x = i;
 					*ptr_grid->tile[i][j].mon->pos.y = j;
 					
-				}
+				}*/
 			}
 		//	printw("^");
 		}
@@ -150,24 +145,15 @@ void gen_level(struct Area* ptr_grid)
 	int randsubx = 0;
 	int randsuby = 0;
 
-	srand(time(NULL));
 
 	randx = rand() % 40 + 20;
 	randy = rand() % 15 + 5;
 
 	randsubx = rand() % (randx - 1) + 1;
 	randsuby = rand() % (randy - 1) + 5;
-
-	clear();
-
-	printw("randx = %d\nrandy = %d\n", randx, randy);
-
-	refresh();
-//	getch();
-
+	
 	for (int i = 0; i < GRIDMAX_X; i++)
 	{
-		ptr_grid->tile[i] = malloc(sizeof(struct Tile) * GRIDMAX_Y);
 		for (int j = 0; j < GRIDMAX_Y; j++)
 		{
 			ptr_grid->tile[i][j].mon = NULL;
@@ -198,5 +184,14 @@ void gen_level(struct Area* ptr_grid)
 			}
 		}
 	}
+	
+	do
+	{	
+		randx = rand() % GRIDMAX_X + 1;
+		randy = rand() % GRIDMAX_Y + 1;
+	} while (ptr_grid->tile[randx][randy].type != floor); 
 
+	ptr_grid->tile[randx][randy].type = down_stair;
+
+	update_grid(ptr_grid);
 }	

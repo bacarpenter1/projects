@@ -13,6 +13,7 @@ enum cmd_code
 	CMD_MOVE,
 	CMD_OPEN,
 	CMD_CLOSE,
+	CMD_DOWN,
 	CMD_QUIT
 };	
 
@@ -75,6 +76,8 @@ void open(struct Command* ptr_cmd, struct Area* ptr_grid);
 void close(struct Command* ptr_cmd, struct Area* ptr_grid);
 
 void wait_cmd(struct Command* ptr_cmd, struct Area* ptr_grid);
+
+void go_down(struct Command* ptr_cmd, struct Area* ptr_grid);
 
 struct Coordinate* new_location(int x, int y, enum Direction dir);
 

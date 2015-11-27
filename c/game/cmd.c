@@ -26,14 +26,15 @@ struct Command* get_cmd()
 	return temp;
 }
 
-#define NUM_CMDS 4
+#define NUM_CMDS 5 
 const struct Game_cmd cmd_list[] = 
 {
 	//cmd_code, dir, Character*, handler_fn
 	{ CMD_WAIT, wait_cmd},
 	{ CMD_MOVE, move_mon},
 	{ CMD_OPEN, open},
-	{ CMD_CLOSE, close}
+	{ CMD_CLOSE, close},
+	{ CMD_DOWN, go_down}
 };
 
 enum cmd_code which_cmd(char command)
@@ -141,6 +142,10 @@ void process_cmd(struct Command* ptr_cmd)
 	{
 		ptr_cmd->code = cmd_list[3].cmd;
 	}
+	else if (ptr_cmd->input == '>')
+	{
+		ptr_cmd->code = CMD_DOWN;
+	}
 	else
 	{
 		ptr_cmd->code = CMD_WAIT;
@@ -149,6 +154,7 @@ void process_cmd(struct Command* ptr_cmd)
 // execute command
 void exec_cmd(struct Command* ptr_cmd, struct Area* ptr_grid)
 {
+	int x,y;
 
 	for (int i = 0; i < NUM_CMDS /*&& ptr_cmd->code != cmd_list[i].cmd */; i++)
 	{	
@@ -156,9 +162,16 @@ void exec_cmd(struct Command* ptr_cmd, struct Area* ptr_grid)
 		if (ptr_cmd->code == cmd_list[i].cmd)
 		{
 			cmd_list[i].fn(ptr_cmd, ptr_grid);
+		
+			x = *ptr_cmd->mon->pos.x;
+			y = *ptr_cmd->mon->pos.y;
+			ptr_grid->tile[x][y].mon = ptr_cmd->mon;
+
 			return;
 		}
 	}
+
+
 }
 void clean_game_cmd(struct Command* ptr_game_cmd)
 {
@@ -236,10 +249,6 @@ void move_mon(struct Command* ptr_cmd, struct Area* ptr_grid)
 		{
 			attack(ptr_cmd->mon, ptr_grid->tile[x][y].mon);
 		}
-		x = *ptr_cmd->mon->pos.x;
-		y = *ptr_cmd->mon->pos.y;
-
-		ptr_grid->tile[x][y].mon = ptr_cmd->mon;
 	}
 
 	clean_coordinate(temp);
@@ -352,6 +361,25 @@ void wait_cmd(struct Command* ptr_cmd, struct Area* ptr_grid)
 
 	return;
 }
+
+void go_down(struct Command* ptr_cmd, struct Area* ptr_grid)
+{
+	int x,y;
+
+	x = *ptr_cmd->mon->pos.x;
+	y = *ptr_cmd->mon->pos.y;
+
+	if (ptr_grid->tile[x][y].type == down_stair)
+	{
+		gen_level(ptr_grid);
+		ptr_grid->tile[x][y].type = up_stair;
+	}
+	else
+	{
+		printw("No stair there!");
+	}
+}
+	
 
 // not sure what this was supposed to be for...
 enum Direction arrow_keys(char direction)

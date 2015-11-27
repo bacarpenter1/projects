@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <ncurses.h>
+#include <time.h>
 #include "character.h"
 #include "cmd.h"
 #include "area.h"
@@ -10,6 +11,8 @@
 
 int main()
 {
+	srand(time(NULL));
+
 	initscr();
 	clear();
 
@@ -29,13 +32,10 @@ int main()
 	ptr_monster->name = "MONSTER";
 	ptr_monster->type = monster;
 
-	printw("%c\n", player->sym);
-
 	grid = init_grid(player);
 	gen_level(grid);
+	add_to_grid(player, grid);
 	add_to_grid(ptr_monster, grid);
-	update_grid(grid);
-	game_cmd = init_game_cmd(player);
 
 	
 //	print_location(player);
@@ -43,6 +43,8 @@ int main()
 	update_grid(grid);
 	update_screen(player, grid);
 	refresh();
+	
+	game_cmd = init_game_cmd(player);
 //	while ( (game_cmd->input = get_cmd()) != CMD_QUIT)
 
 //	while ( game_cmd->code != CMD_QUIT )
@@ -51,12 +53,12 @@ int main()
 	{
 //	char temp = '0';
 //	while ( temp != 'q' )
-//	{ 
+//	{
 	
 		if (turn == 'p')
 		{
 			game_cmd->mon = player;
-			turn = 'm';
+//			turn = 'm';
 		}
 		else
 		{
@@ -68,7 +70,6 @@ int main()
 //		proc_direction(game_cmd);
 
 		
-	//	game_cmd = get_cmd();
 		process_cmd(game_cmd);
 		exec_cmd(game_cmd, grid);
 		
