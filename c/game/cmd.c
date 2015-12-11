@@ -7,7 +7,7 @@
 #include "area.h"
 #include "cmd.h"
 
-
+// get the command 
 struct Command* get_cmd()
 {
 	struct Command* temp = malloc(sizeof(struct Command));
@@ -26,7 +26,7 @@ struct Command* get_cmd()
 	return temp;
 }
 
-#define NUM_CMDS 5 
+#define NUM_CMDS 7
 const struct Game_cmd cmd_list[] = 
 {
 	//cmd_code, dir, Character*, handler_fn
@@ -34,9 +34,11 @@ const struct Game_cmd cmd_list[] =
 	{ CMD_MOVE, move_mon},
 	{ CMD_OPEN, open},
 	{ CMD_CLOSE, close},
-	{ CMD_DOWN, go_down}
+	{ CMD_DOWN, go_down},
+	{ CMD_INV, list_inventory},
+	{ CMD_UP, go_up}
 };
-
+//
 enum cmd_code which_cmd(char command)
 {
 	if (command == 'q')
@@ -48,7 +50,7 @@ enum cmd_code which_cmd(char command)
 		return CMD_WAIT;
 	}
 }
-
+// determine direction from input
 enum Direction proc_direction(struct Command* ptr_cmd)
 {
 	noecho();
@@ -82,7 +84,8 @@ enum Direction proc_direction(struct Command* ptr_cmd)
 */
 		ptr_cmd->dir = arrow_keys(direction);
 	}
-	else if (ptr_cmd->input == 'o' || ptr_cmd->input == 'c')
+//	else if (ptr_cmd->input == 'o' || ptr_cmd->input == 'c')
+	else
 	{
 		printw("Enter direction: ");
 		direction = getch();
@@ -146,6 +149,14 @@ void process_cmd(struct Command* ptr_cmd)
 	{
 		ptr_cmd->code = CMD_DOWN;
 	}
+	else if (ptr_cmd->input == '<')
+	{
+		ptr_cmd->code = CMD_UP;
+	}
+	else if (ptr_cmd->input == 'i')
+	{
+		ptr_cmd->code = CMD_INV;
+	}
 	else
 	{
 		ptr_cmd->code = CMD_WAIT;
@@ -173,6 +184,7 @@ void exec_cmd(struct Command* ptr_cmd, struct Area* ptr_grid)
 
 
 }
+
 void clean_game_cmd(struct Command* ptr_game_cmd)
 {
 	free(ptr_game_cmd);
@@ -268,12 +280,19 @@ void attack(struct Character* ptr_attacker, struct Character* ptr_defender)
 void open(struct Command* ptr_cmd, struct Area* ptr_grid)
 {
 	int x, y;
+	struct Coordinate* temp;
 
 	proc_direction(ptr_cmd);
+
 
 	x = *ptr_cmd->mon->pos.x;
 	y = *ptr_cmd->mon->pos.y;
 
+	temp = new_location(x, y, ptr_cmd->dir);	
+
+	x = *temp->x;
+	y = *temp->y;
+/*
 	switch (ptr_cmd->dir)
 	{	case north:
 			if ((y+1) < GRIDMAX_Y)
@@ -302,12 +321,17 @@ void open(struct Command* ptr_cmd, struct Area* ptr_grid)
 		default:
 			break;
 	}
-
+*/
 	if (ptr_grid->tile[x][y].type == door_closed)
 	{
 		ptr_grid->tile[x][y].type = door_open;
 	}
-
+	else
+	{
+		move(0,0);
+		printw("Nothing to open!");
+		getch();
+	}
 }
 
 void close(struct Command* ptr_cmd, struct Area* ptr_grid)
@@ -352,6 +376,12 @@ void close(struct Command* ptr_cmd, struct Area* ptr_grid)
 	{
 		ptr_grid->tile[x][y].type = door_closed;
 	}
+	else
+	{
+		move(0,0);
+		printw("Nothing to close!");
+		getch();
+	}
 
 }
 
@@ -364,11 +394,12 @@ void wait_cmd(struct Command* ptr_cmd, struct Area* ptr_grid)
 
 void go_down(struct Command* ptr_cmd, struct Area* ptr_grid)
 {
+
 	int x,y;
 
 	x = *ptr_cmd->mon->pos.x;
 	y = *ptr_cmd->mon->pos.y;
-
+	
 	if (ptr_grid->tile[x][y].type == down_stair)
 	{
 		gen_level(ptr_grid);
@@ -377,10 +408,49 @@ void go_down(struct Command* ptr_cmd, struct Area* ptr_grid)
 	else
 	{
 		printw("No stair there!");
+		getch();
 	}
 }
 	
+void go_up(struct Command* ptr_cmd, struct Area* ptr_grid)
+{
 
+	int x,y;
+
+	x = *ptr_cmd->mon->pos.x;
+	y = *ptr_cmd->mon->pos.y;
+
+	if (ptr_grid->tile[x][y].type == up_stair)
+	{
+		gen_level(ptr_grid);
+		ptr_grid->tile[x][y].type = down_stair;
+	}
+	else
+	{
+		printw("No stair there!");
+		getch();
+	}
+}
+
+// lists inventory
+void list_inventory(struct Command* ptr_cmd, struct Area* ptr_grid)
+{
+	WINDOW* win_inventory; 
+
+	win_inventory = newwin(10,INVWIN_XWIDTH, INVWIN_YPOS, INVWIN_XPOS);
+
+	
+	wprintw(win_inventory,"TEST");
+	wrefresh(win_inventory);
+
+	getch();
+
+	delwin(win_inventory);
+
+	
+
+	
+}
 // not sure what this was supposed to be for...
 enum Direction arrow_keys(char direction)
 {

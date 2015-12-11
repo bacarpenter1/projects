@@ -6,6 +6,9 @@
 #include "character.h"
 #include "area.h"
 
+#define INVWIN_XWIDTH 40
+#define INVWIN_XPOS 40
+#define INVWIN_YPOS 0
 
 enum cmd_code
 {
@@ -14,6 +17,8 @@ enum cmd_code
 	CMD_OPEN,
 	CMD_CLOSE,
 	CMD_DOWN,
+	CMD_UP,
+	CMD_INV,
 	CMD_QUIT
 };	
 
@@ -78,6 +83,10 @@ void close(struct Command* ptr_cmd, struct Area* ptr_grid);
 void wait_cmd(struct Command* ptr_cmd, struct Area* ptr_grid);
 
 void go_down(struct Command* ptr_cmd, struct Area* ptr_grid);
+
+void go_up(struct Command* ptr_cmd, struct Area* ptr_grid);
+
+void list_inventory(struct Command* ptr_cmd, struct Area* ptr_grid);
 
 struct Coordinate* new_location(int x, int y, enum Direction dir);
 

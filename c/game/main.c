@@ -16,6 +16,8 @@ int main()
 	initscr();
 	clear();
 
+	noecho();
+
 	// declare player character as type Character
 	struct Character* player, * ptr_monster;
 	struct Area* grid;
@@ -37,9 +39,11 @@ int main()
 	add_to_grid(player, grid);
 	add_to_grid(ptr_monster, grid);
 
-	
+	//gen_level(grid);
+
 //	print_location(player);
 
+	printw(" Turn: %c\n", turn);
 	update_grid(grid);
 	update_screen(player, grid);
 	refresh();
@@ -49,6 +53,8 @@ int main()
 
 //	while ( game_cmd->code != CMD_QUIT )
 //	{
+
+
 	while ( game_cmd->input != 'q')
 	{
 //	char temp = '0';
@@ -67,19 +73,13 @@ int main()
 			turn = 'p';
 		}
 
-//		proc_direction(game_cmd);
-
-		
 		process_cmd(game_cmd);
 		exec_cmd(game_cmd, grid);
 		
-		//clear();
-		
-		//print_location(player);		
 		update_grid(grid);				
 		clear();
 
-		printw("Turn: %c\n",turn);
+		printw(" Turn: %c\n",turn);
 		update_screen(player, grid);
 
 		//NOTE!! refresh() called here only so cursor and ptr_monster can be printed 

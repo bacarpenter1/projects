@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <ncurses.h>
 
+
+// ai random movement
 char ai_move()
 {
 	int dir = 0;

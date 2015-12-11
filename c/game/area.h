@@ -50,6 +50,7 @@ struct Tile
 // map made up of multiple tiles
 struct Area
 {
+	int level;
 	struct Tile** tile;
 };
 
@@ -64,4 +65,6 @@ void update_grid(struct Area* ptr_grid);
 void clean_grid(struct Area* ptr_grid);
 
 void gen_level(struct Area* ptr_grid);
+
+struct Character* find_player(struct Area* ptr_grid);
 #endif //end AREA_H
