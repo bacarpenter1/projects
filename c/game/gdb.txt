@@ -1,0 +1,5 @@
+Starting program: /usr/home/ben/prog/projects/c/game/bingame 
+(no debugging symbols found)...(no debugging symbols found)...(no debugging symbols found)...
+Program received signal SIGSEGV, Segmentation fault.
+0x080494e1 in gen_level ()
+The program is running.  Exit anyway? (y or n) 

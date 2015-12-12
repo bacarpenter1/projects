@@ -527,12 +527,15 @@ void drop_item(struct Command* ptr_cmd, struct Area* ptr_grid)
 	
 	if (ptr_grid->tile[x][y].item == NULL)
 	{
-		ptr_grid->tile[x][y].item = malloc(sizeof(struct Item));
-		*ptr_grid->tile[x][y].item = ptr_cmd->mon->inventory[index];
-
-		ptr_cmd->mon->inventory[index].name = " ";
-		ptr_cmd->mon->inventory[index].type = no_item;
-		ptr_cmd->mon->inventory[index].symbol = ' ';
+		if (ptr_cmd->mon->inventory[index].type != no_item)
+		{
+			ptr_grid->tile[x][y].item = malloc(sizeof(struct Item));
+			*ptr_grid->tile[x][y].item = ptr_cmd->mon->inventory[index];
+	
+			ptr_cmd->mon->inventory[index].name = " ";
+			ptr_cmd->mon->inventory[index].type = no_item;
+			ptr_cmd->mon->inventory[index].symbol = ' ';
+		}
 	}
 	else
 	{
