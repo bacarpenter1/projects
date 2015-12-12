@@ -6,7 +6,8 @@
 #include "item.h"
 //#include "area.h"
 #include "coordinate.h"
-
+#
+#define INVENTORY_SIZE 10
 enum CharacterType
 {
 	player,
@@ -17,7 +18,7 @@ struct Character
 	char* name;
 	char sym;
 	int health, maxHealth;
-	struct Item inventory[10];
+	struct Item inventory[INVENTORY_SIZE];
 	struct Coordinate pos;
 	enum CharacterType type;
 	struct Character* target;

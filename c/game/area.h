@@ -45,6 +45,7 @@ struct Tile
 	char floor[2]; // = { '.', '#' };	
 	enum tileType type;	
 	struct Character* mon;
+	struct Item* item;	
 };
 
 // map made up of multiple tiles

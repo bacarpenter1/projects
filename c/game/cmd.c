@@ -26,17 +26,20 @@ struct Command* get_cmd()
 	return temp;
 }
 
-#define NUM_CMDS 7
+#define NUM_CMDS 9
 const struct Game_cmd cmd_list[] = 
 {
 	//cmd_code, dir, Character*, handler_fn
-	{ CMD_WAIT, wait_cmd},
-	{ CMD_MOVE, move_mon},
-	{ CMD_OPEN, open},
-	{ CMD_CLOSE, close},
-	{ CMD_DOWN, go_down},
-	{ CMD_INV, list_inventory},
-	{ CMD_UP, go_up}
+	{ CMD_WAIT, wait_cmd },
+	{ CMD_MOVE, move_mon },
+	{ CMD_OPEN, open },
+	{ CMD_CLOSE, close },
+	{ CMD_DOWN, go_down },
+	{ CMD_UP, go_up },
+	{ CMD_INV, list_inventory },
+	{ CMD_GET, get_item },
+	{ CMD_DROP, drop_item }
+
 };
 //
 enum cmd_code which_cmd(char command)
@@ -156,6 +159,14 @@ void process_cmd(struct Command* ptr_cmd)
 	else if (ptr_cmd->input == 'i')
 	{
 		ptr_cmd->code = CMD_INV;
+	}
+	else if (ptr_cmd->input == 'g')
+	{
+		ptr_cmd->code = CMD_GET;
+	}
+	else if (ptr_cmd->input == 'd')
+	{
+		ptr_cmd->code = CMD_DROP;
 	}
 	else
 	{
@@ -437,12 +448,22 @@ void list_inventory(struct Command* ptr_cmd, struct Area* ptr_grid)
 {
 	WINDOW* win_inventory; 
 
-	win_inventory = newwin(10,INVWIN_XWIDTH, INVWIN_YPOS, INVWIN_XPOS);
+	win_inventory = newwin(INVENTORY_SIZE+2,INVWIN_XWIDTH+2, INVWIN_YPOS, INVWIN_XPOS-2);
 
+
+	printw("Inventory:");
+	wborder(win_inventory, '|', '|', '-', '-', '+', '+', '+', '+');
+	wmove(win_inventory, 1 , 1);
+
+	for (int i = 0; i < INVENTORY_SIZE; i++)
+	{
+		wmove(win_inventory, i+1, 1);
+		wprintw(win_inventory, "%c) %s", 'a'+i, ptr_cmd->mon->inventory[i].name);
+	}
 	
-	wprintw(win_inventory,"TEST");
+	//wprintw(win_inventory,"TEST");
 	wrefresh(win_inventory);
-
+	move(0,10);
 	getch();
 
 	delwin(win_inventory);
@@ -451,6 +472,75 @@ void list_inventory(struct Command* ptr_cmd, struct Area* ptr_grid)
 
 	
 }
+
+// get an item from the floor 
+void get_item(struct Command* ptr_cmd, struct Area* ptr_grid)
+{
+	int x, y, index;
+
+	// get player position	
+	x = *ptr_cmd->mon->pos.x;
+	y = *ptr_cmd->mon->pos.y;
+
+	index = 0;
+
+	if (ptr_grid->tile[x][y].item != NULL)  
+	{
+		if (ptr_grid->tile[x][y].item->type != no_item)  
+		{	while (ptr_cmd->mon->inventory[index].type != no_item)
+			{
+				index++;
+			}
+		
+			if (index < INVENTORY_SIZE)
+			{
+				ptr_cmd->mon->inventory[index] = *ptr_grid->tile[x][y].item;
+				free(ptr_grid->tile[x][y].item);
+				ptr_grid->tile[x][y].item = NULL;
+			}
+			else
+			{
+				printw("Inventory Full");
+			}
+		}
+	}
+	else
+	{
+		printw("Nothing to pick up!");
+	}
+}
+// drop an item on the floor
+void drop_item(struct Command* ptr_cmd, struct Area* ptr_grid)
+{
+	int x, y, index;
+
+	// get player position	
+	x = *ptr_cmd->mon->pos.x;
+	y = *ptr_cmd->mon->pos.y;
+
+	index = 0;
+
+	printw("Which item? ");
+	
+	// convert char input to index
+	index = getch() - 'a';
+	
+	if (ptr_grid->tile[x][y].item == NULL)
+	{
+		ptr_grid->tile[x][y].item = malloc(sizeof(struct Item));
+		*ptr_grid->tile[x][y].item = ptr_cmd->mon->inventory[index];
+
+		ptr_cmd->mon->inventory[index].name = " ";
+		ptr_cmd->mon->inventory[index].type = no_item;
+		ptr_cmd->mon->inventory[index].symbol = ' ';
+	}
+	else
+	{
+		printw("There's something there!");
+	}
+}
+
+
 // not sure what this was supposed to be for...
 enum Direction arrow_keys(char direction)
 {

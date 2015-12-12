@@ -16,6 +16,13 @@ struct Character* init_character()
 	mon->type = player;
 	mon->target = NULL;
 
+	for (int i = 0; i < 10; i++)
+	{
+		mon->inventory[i].name = " ";
+		mon->inventory[i].type = no_item;
+		mon->inventory[i].symbol =  ' ';
+	}
+
 	// allocate mem for coordinates
 	mon->pos.x = malloc(sizeof(int));
 	mon->pos.y = malloc(sizeof(int));

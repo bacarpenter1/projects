@@ -7,6 +7,7 @@
 #include "area.h"
 #include "coordinate.h"
 #include "character.h"
+#include "item.h"
 
 // all characters for tile type
 const char tile_character[] = { '.', '#', '<', '>', '+', ','};
@@ -33,6 +34,7 @@ struct Area* init_grid(struct Character* ptr_player)
 		for (int j = 0; j < GRIDMAX_Y; j++)
 		{
 			ptr_grid->tile[i][j].mon = NULL;
+			ptr_grid->tile[i][j].item = NULL;
 			ptr_grid->tile[i][j].type = wall;
 		}
 	}
@@ -85,6 +87,10 @@ void print_grid(struct Area* ptr_grid)
 					player_x = i;
 					player_y = j;
 				}
+			}
+			else if (ptr_grid->tile[i][j].item != NULL)
+			{
+				printw("%c", ptr_grid->tile[i][j].item->symbol);
 			}
 			else
 			{ 
@@ -249,6 +255,19 @@ void gen_level(struct Area* ptr_grid)
 	} while (ptr_grid->tile[randx][randy].type != floor); 
 
 	ptr_grid->tile[randx][randy].type = down_stair;
+
+	// place a couple test items at random
+	for (int i = 0; i < 3; i++)
+	{
+		do
+		{	
+			randx = rand() % (GRIDMAX_X - 1) + 1;
+			randy = rand() % (GRIDMAX_Y - 1) + 1;
+		} while (ptr_grid->tile[randx][randy].type != floor); 
+
+		ptr_grid->tile[randx][randy].item = malloc(sizeof(struct Item));
+		*ptr_grid->tile[randx][randy].item = ItemList[0];
+	}
 
 	// update the grid
 	update_grid(ptr_grid);

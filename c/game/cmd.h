@@ -19,6 +19,8 @@ enum cmd_code
 	CMD_DOWN,
 	CMD_UP,
 	CMD_INV,
+	CMD_GET,
+	CMD_DROP,
 	CMD_QUIT
 };	
 
@@ -87,6 +89,10 @@ void go_down(struct Command* ptr_cmd, struct Area* ptr_grid);
 void go_up(struct Command* ptr_cmd, struct Area* ptr_grid);
 
 void list_inventory(struct Command* ptr_cmd, struct Area* ptr_grid);
+
+void get_item(struct Command* ptr_cmd, struct Area* ptr_grid);
+
+void drop_item(struct Command* ptr_cmd, struct Area* ptr_grid);
 
 struct Coordinate* new_location(int x, int y, enum Direction dir);
 
